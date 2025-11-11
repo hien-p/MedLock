@@ -10,7 +10,7 @@ function getArg(flag: string, fallback?: string) {
 
 async function main() {
   const blobId = getArg('--blob');
-  const outPath = getArg('--out', './downloaded.bin');
+  const outPath = getArg('--out', './downloaded.bin') ?? './downloaded.bin';
   if (!blobId) throw new Error('--blob <id> is required');
   const walrusContext = process.env.WALRUS_CONTEXT;
   const walrusRpc = process.env.WALRUS_RPC_URL;

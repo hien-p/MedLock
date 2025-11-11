@@ -1,8 +1,19 @@
 # Privacy-Preserving AI on Walrus
 
-Safely training and deploying AI on biomedical data (like fMRI scans) is blocked by privacy regulation and brittle custodial workflows. Traditional cloud pipelines require blind trust in operators, routinely violating GDPR/HIPAA principles around data minimization, provenance, and auditability.
+Medlock is a web-based dApp showcasing a privacy-preserving AI workflow for medical data, built on the **Walrus–Seal–Nautilus** stack. It allows a hospital (data owner) to encrypt and share an fMRI brain scan with an AI researcher in a way that no raw data is ever exposed
 
-This repo documents a zero-trust alternative built on the Walrus ecosystem. Every step—encryption, storage, computation, and audit—is cryptographically verifiable and never exposes raw patient data outside of a hardware-enforced enclave.
+# Key Concepts
+
+
+![Encrypted inference pipeline](public/seqtoseq.svg)
+
+* Roles: **Data Owner (Hospital)** who uploads sensitive fMRI data, and **Researcher** who runs AI inference on the data.
+
+* **Tech Stack**: Seal SDK handles on-device encryption and on-chain **consent policy** creation. **Walrus** provides **decentralized blob storage** (storing encrypted fMRI files with on-chain proofs) **Nautilus TEE** enclaves perform AI computation on the encrypted data and produce attested results. **Sui smart contracts** coordinate policy enforcement, consent, and audit logging.
+
+* **Trust Guarantees**: Medlock visually highlights that data remains **encrypted at rest, in transit, and in use**. Decryption happens only inside a verified TEE enclave; all access is gated by on-chain policy and enclave attestation . Every action (data upload, access request, result submission) leaves an audit trail on-chain , assuring the user of compliance and accountability.
+
+
 
 
 ## Solution Overview
