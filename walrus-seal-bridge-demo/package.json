@@ -1,0 +1,21 @@
+{
+  "name": "walrus-seal-bridge-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "encrypt:store": "tsx src/encrypt_and_store.ts",
+    "walrus:read": "tsx src/read_from_walrus.ts",
+    "start:job": "tsx src/start_job.ts"
+  },
+  "dependencies": {
+    "@mysten/seal": "^0.2.0",
+    "@mysten/sui": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3"
+  }
+}
