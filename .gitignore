@@ -1,0 +1,9 @@
+# Dependencies
+node_modules/
+walrus-seal-bridge-demo/node_modules/
+
+# Build artifacts
+dist/
+
+# macOS cruft
+.DS_Store
