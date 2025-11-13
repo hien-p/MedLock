@@ -4,6 +4,8 @@ walrus-seal-bridge-demo/node_modules/
 
 # Build artifacts
 dist/
+package-lock.json
+**/package-lock.json
 
 # macOS cruft
 .DS_Store
