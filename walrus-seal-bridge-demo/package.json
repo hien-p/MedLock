@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "encrypt:store": "tsx src/encrypt_and_store.ts",
+    "encrypt_seal.ts": "tsx src/encrypt_seal.ts",
     "walrus:read": "tsx src/read_from_walrus.ts",
     "start:job": "tsx src/start_job.ts"
   },
@@ -13,7 +14,8 @@
     "@mysten/seal": "^0.9.3",
     "@mysten/sui": "^1.44.0",
     "dotenv": "^16.4.5",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "tslog": "^4.10.2"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",

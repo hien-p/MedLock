@@ -9,3 +9,8 @@ package-lock.json
 
 # macOS cruft
 .DS_Store
+
+# Secrets
+.env
+*.env
+walrus-seal-bridge-demo/.env
