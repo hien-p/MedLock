@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dorksense</title>
+    
+    <!-- 1. Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 2. Google Fonts: Anton (bold/brutal) & Space Mono (techy/raw) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 3. Custom Tailwind Config (for colors, fonts, and shadows) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-pink': '#FF00FF',
+                        'neon-lime': '#00FF00',
+                        'neon-blue': '#00FFFF',
+                        'brand-bg': '#F0F0F0', // A light, industrial grey
+                        'brand-dark': '#111111',
+                    },
+                    fontFamily: {
+                        'display': ['Anton', 'sans-serif'], // For big, bold titles
+                        'mono': ['Space Mono', 'monospace'], // For body copy
+                    },
+                    boxShadow: {
+                        // The core of neo-brutalism: hard, offset shadows
+                        'hard': '4px 4px 0px #111111',
+                        'hard-sm': '2px 2px 0px #111111',
+                        'hard-pink': '5px 5px 0px #FF00FF',
+                        'hard-blue': '5px 5px 0px #00FFFF',
+                        'hard-lime': '5px 5px 0px #00FF00',
+                    },
+                    animation: {
+                        'marquee': 'marquee 20s linear infinite',
+                        'float-1': 'float-1 15s ease-in-out infinite', // Added this
+                        'float-2': 'float-2 12s ease-in-out infinite', // Added this
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        },
+                        'float-1': { // Added this keyframe
+                            '0%, 100%': { transform: 'translateY(0px) translateX(0px) rotate(0deg)' },
+                            '25%': { transform: 'translateY(-20px) translateX(10px) rotate(5deg)' },
+                            '50%': { transform: 'translateY(0px) translateX(20px) rotate(0deg)' },
+                            '75%': { transform: 'translateY(20px) translateX(10px) rotate(-5deg)' },
+                        },
+                        'float-2': { // Added this keyframe
+                            '0%, 100%': { transform: 'translateY(0px) rotate(10deg)' },
+                            '50%': { transform: 'translateY(-30px) rotate(-10deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- 4. CSS for animations and custom scrollbar -->
+    <style>
+        /* Smooth scroll animation styles */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1), transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        .scroll-reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom brutalist scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F0F0F0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #111111;
+            border: 3px solid #F0F0F0;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF00FF;
+        }
+        
+        /* Smooth scrolling behavior for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<!-- Base styles applied to the body -->
+<body class="bg-brand-bg text-brand-dark font-mono overflow-x-hidden antialiased">
+
+    <!-- 
+      ============================================================
+      HERO SECTION: Overlapping text and blur-blobs
+      ============================================================
+    -->
+    <main class="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        
+        <!-- Background "fancy color" blobs -->
+        <div class="absolute -top-20 -left-20 w-60 h-60 md:w-96 md:h-96 bg-neon-lime rounded-full filter blur-3xl opacity-60 animate-pulse"></div>
+        <div class="absolute -bottom-20 -right-20 w-72 h-72 md:w-96 md:h-96 bg-neon-pink rounded-full filter blur-3xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
+
+        <!-- NEW FLOATING OBJECTS -->
+        <img src="https://cdn.prod.website-files.com/687615731a76518b8c27cf39/68761ce22a49c0f7365165e8_Group%202147263312%20(1).svg" alt="Floating Seal" class="absolute top-1/4 left-10 w-24 h-24 opacity-70 z-5 animate-float-1 hidden md:block" style="animation-delay: -2s; transform: rotate(15deg);">
+        <img src="https://cdn.prod.website-files.com/687615731a76518b8c27cf39/68761ce22a49c0f7365165e8_Group%202147263312%20(1).svg" alt="Floating Seal" class="absolute bottom-1/4 right-10 w-32 h-32 opacity-70 z-5 animate-float-2 hidden md:block" style="transform: rotate(-20deg) scaleX(-1);">
+        <img src="https://cdn.prod.website-files.com/6864f039b26f4afedada6bc5/6864f039b26f4afedada6c71_token-ilust3.svg" alt="Floating Walrus" class="absolute top-1/2 left-1/4 w-28 h-28 opacity-60 z-5 animate-float-2 hidden lg:block" style="animation-delay: -5s;">
+        <img src="https://cdn.prod.website-files.com/687615731a76518b8c27cf39/68761ce22a49c0f7365165e8_Group%202147263312%20(1).svg" alt="Floating Seal" class="absolute bottom-10 left-1/3 w-20 h-20 opacity-70 z-5 animate-float-1 md:hidden" style="transform: rotate(-10deg);">
+        <!-- END NEW FLOATING OBJECTS -->
+
+        <!-- The creative, overlapping title -->
+        <div class="grid grid-cols-1 grid-rows-1 text-center z-10">
+            <!-- Title Layer 1 (Back, outline) -->
+            <h1 class="font-display text-[22vw] lg:text-[250px] text-neon-pink col-start-1 row-start-1" style="-webkit-text-stroke: 2px #111;">
+                DORKSENSE
+            </h1>
+            <!-- Title Layer 2 (Front, solid) -->
+            <h1 class="font-display text-[22vw] lg:text-[250px] text-neon-blue col-start-1 row-start-1 transform translate-x-1 translate-y-1 md:translate-x-2 md:translate-y-2">
+                DORKSENSE
+            </h1>
+        </div>
+        
+        <h2 class="font-mono text-lg md:text-2xl mt-4 bg-neon-lime p-2 shadow-hard border-2 border-brand-dark z-10 text-center">
+            A Privacy-Preserving AI Workflow
+        </h2>
+
+        <!-- Scroll prompt -->
+        <a href="#content" class="absolute bottom-10 font-mono animate-bounce text-2xl z-10 p-2 shadow-hard-sm bg-white border-2 border-brand-dark rounded-full" aria-label="Scroll down to content">
+            👇
+        </a>
+    </main>
+
+    <!-- 
+      ============================================================
+      MARQUEE SECTION: Classic brutalist element
+      ============================================================
+    -->
+    <section class="w-full bg-brand-dark text-brand-bg py-6 border-y-4 border-brand-dark overflow-hidden whitespace-nowrap">
+        <div class="inline-block animate-marquee">
+            <span class="font-display text-5xl mx-4">WALRUS</span>
+            <span class="font-display text-5xl mx-4 text-neon-lime">★</span>
+            <span class="font-display text-5xl mx-4">SEAL</span>
+            <span class="font-display text-5xl mx-4 text-neon-pink">★</span>
+            <span class="font-display text-5xl mx-4">NAUTILUS</span>
+            <span class="font-display text-5xl mx-4 text-neon-blue">★</span>
+            <span class="font-display text-5xl mx-4">ZERO-TRUST COMPUTE</span>
+            <span class="font-display text-5xl mx-4 text-neon-lime">★</span>
+        </div>
+        <!-- Duplicate for a seamless loop -->
+        <div class="inline-block animate-marquee">
+            <span class="font-display text-5xl mx-4">WALRUS</span>
+            <span class="font-display text-5xl mx-4 text-neon-lime">★</span>
+            <span class="font-display text-5xl mx-4">SEAL</span>
+            <span class="font-display text-5xl mx-4 text-neon-pink">★</span>
+            <span class="font-display text-5xl mx-4">NAUTILUS</span>
+            <span class="font-display text-5xl mx-4 text-neon-blue">★</span>
+            <span class="font-display text-5xl mx-4">ZERO-TRUST COMPUTE</span>
+            <span class="font-display text-5xl mx-4 text-neon-lime">★</span>
+        </div>
+    </section>
+
+    <!-- 
+      ============================================================
+      CONTENT SECTION: Animated cards
+      ============================================================
+    -->
+    <section id="content" class="container mx-auto p-4 md:p-10 py-16">
+        
+        <h2 class="font-display text-5xl md:text-7xl mb-10 text-center scroll-reveal">THE ECOSYSTEM</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            
+            <!-- Card 1 (Animated) -->
+            <div class="scroll-reveal bg-white border-2 border-brand-dark shadow-hard p-6 group hover:bg-neon-lime hover:-translate-y-1 hover:shadow-hard-pink transition-all duration-200">
+                <!-- Image container -->
+                <div class="w-full h-32 bg-brand-bg border-2 border-brand-dark shadow-hard-sm rounded-md mb-4 overflow-hidden group-hover:bg-neon-lime transition-all duration-200">
+                    <img src="https://cdn.prod.website-files.com/6864f039b26f4afedada6bc5/6864f039b26f4afedada6c71_token-ilust3.svg" alt="Walrus Mascot" class="w-full h-full object-contain p-2" onerror="this.src='https://placehold.co/400x300/F0F0F0/111111?text=WALRUS'">
+                </div>
+                <h3 class="font-display text-4xl mb-2">WALRUS</h3>
+                <p class="font-mono">Decentralized, verifiable blob storage for large data. Acts as the AI data backbone, making datasets trustworthy and provable.</p>
+                <button class="mt-4 bg-brand-dark text-white font-mono px-4 py-2 border-2 border-brand-dark shadow-hard-sm hover:bg-neon-pink hover:text-brand-dark hover:shadow-hard-lime transition-all">DATA BACKBONE</button>
+            </div>
+
+            <!-- Card 2 (Animated) -->
+            <div class="scroll-reveal bg-white border-2 border-brand-dark shadow-hard p-6 group hover:bg-neon-blue hover:-translate-y-1 hover:shadow-hard-blue transition-all duration-200" style="transition-delay: 100ms;">
+                <!-- Image container -->
+                <div class="w-full h-32 bg-brand-bg border-2 border-brand-dark shadow-hard-sm rounded-md mb-4 overflow-hidden group-hover:bg-neon-blue transition-all duration-200">
+                    <img src="https://cdn.prod.website-files.com/687615731a76518b8c27cf39/68761ce22a49c0f7365165e8_Group%202147263312%20(1).svg" alt="Seal Mascot" class="w-full h-full object-contain p-2" onerror="this.src='https://placehold.co/400x300/F0F0F0/111111?text=SEAL'">
+                </div>
+                <h3 class="font-display text-4xl mb-2">SEAL</h3>
+                <p class="font-mono">Client-side encryption with programmable, on-chain access control. Defines who can decrypt what, for how long, and under which rules.</p>
+                <button class="mt-4 bg-brand-dark text-white font-mono px-4 py-2 border-2 border-brand-dark shadow-hard-sm hover:bg-neon-pink hover:text-brand-dark hover:shadow-hard-lime transition-all">ACCESS CONTROL</button>
+            </div>
+
+            <!-- Card 3 (Animated) -->
+            <div class="scroll-reveal bg-white border-2 border-brand-dark shadow-hard p-6 group hover:bg-neon-pink hover:-translate-y-1 hover:shadow-hard-lime transition-all duration-200" style="transition-delay: 200ms;">
+                <!-- Image container -->
+                <div class="w-full h-32 bg-brand-bg border-2 border-brand-dark shadow-hard-sm rounded-md mb-4 overflow-hidden group-hover:bg-neon-pink transition-all duration-200">
+                    <img src="image_799847.png" alt="Sui Logo for Nautilus" class="w-full h-full object-contain p-2" onerror="this.src='https://placehold.co/400x300/F0F0F0/111111?text=NAUTILUS+SUI'">
+                </div>
+                <h3 class="font-display text-4xl mb-2">NAUTILUS</h3>
+                <p class="font-mono">Confidential and verifiable computing inside Trusted Execution Environments (TEEs). Run AI models on data that never leaves the enclave.</p>
+                <button class="mt-4 bg-brand-dark text-white font-mono px-4 py-2 border-2 border-brand-dark shadow-hard-sm hover:bg-neon-pink hover:text-brand-dark hover:shadow-hard-lime transition-all">CONFIDENTIAL COMPUTE</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 
+      ============================================================
+      CREATIVE SECTION: Draggable element
+      ============================================================
+    -->
+    <section class="scroll-reveal w-full py-20 px-4 flex items-center justify-center bg-neon-blue border-y-4 border-brand-dark relative min-h-[400px]">
+        
+        <h2 class="font-display text-5xl md:text-8xl text-center">THIS IS INTENTIONAL.</h2>
+        
+        <!-- The Draggable "Error" Box -->
+        <div id="draggable" class="absolute top-1/2 left-1/2 w-72 bg-neon-lime border-4 border-brand-dark shadow-hard-pink p-4 cursor-move" style="transform: rotate(-5deg);">
+            <h4 class="font-display text-xl border-b-2 border-brand-dark mb-2">SYSTEM ALERT! (DRAG ME)</h4>
+            <p class="font-mono text-sm">This workflow ensures sensitive fMRI data is encrypted at the source and only decrypted within a trusted TEE for AI inference.</p>
+            <div class="text-xs font-mono mt-2 text-right">ZERO-TRUST MODEL</div>
+        </div>
+    </section>
+
+    <!-- 
+      ============================================================
+      BENEFITS SECTION: New section from doc content
+      ============================================================
+    -->
+    <section class="scroll-reveal container mx-auto p-4 md:p-10 py-16">
+        <h2 class="font-display text-5xl md:text-7xl mb-10 text-center scroll-reveal">BENEFITS & COMPLIANCE</h2>
+        <div class="space-y-6">
+            
+            <!-- Benefit 1 -->
+            <div class="scroll-reveal bg-white border-2 border-brand-dark shadow-hard p-6 hover:shadow-hard-blue transition-all duration-200">
+                <h3 class="font-display text-3xl mb-2">REGULATORY COMPLIANCE (GDPR/HIPAA)</h3>
+                <p class="font-mono">Data is encrypted at rest, in transit, and in use. Fine-grained on-chain policies act as explicit, auditable consent records.</p>
+            </div>
+
+            <!-- Benefit 2 -->
+            <div class="scroll-reveal bg-white border-2 border-brand-dark shadow-hard p-6 hover:shadow-hard-lime transition-all duration-200">
+                <h3 class="font-display text-3xl mb-2">USER CONSENT & REVOCABILITY</h3>
+                <p class="font-mono">Patients control their data. Access is programmatically tied to consent. Consent can be updated or revoked on-chain, instantly preventing new decryption.</p>
+            </div>
+
+            <!-- Benefit 3 -->
+            <div class="scroll-reveal bg-white border-2 border-brand-dark shadow-hard p-6 hover:shadow-hard-pink transition-all duration-200">
+                <h3 class="font-display text-3xl mb-2">ZERO-TRUST CONFIDENTIAL COMPUTE</h3>
+                <p class="font-mono">Eliminates the need to trust any single platform. Data is protected by encryption and hardware-backed isolation at every stage. No admin can see plaintext.</p>
+            </div>
+
+            <!-- Benefit 4 -->
+            <div class="scroll-reveal bg-white border-2 border-brand-dark shadow-hard p-6 hover:shadow-hard-blue transition-all duration-200">
+                <h3 class="font-display text-3xl mb-2">ACCESS AUDITABILITY & PROVENANCE</h3>
+                <p class="font-mono">Every data access and computation is logged on the blockchain. These tamper-proof audit trails enable compliance and trustworthy provenance tracking.</p>
+            </div>
+
+            <!-- Benefit 5 -->
+            <div class="scroll-reveal bg-white border-2 border-brand-dark shadow-hard p-6 hover:shadow-hard-lime transition-all duration-200">
+                <h3 class="font-display text-3xl mb-2">CROSS-ORGANIZATION COLLABORATION</h3>
+                <p class="font-mono">Facilitates secure data sharing across hospitals and labs without exposing raw data. Teams can share encrypted data and run computations in enclaves.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 
+      ============================================================
+      COLOR GRID SECTION: Pure aesthetic
+      ============================================================
+    -->
+    <section class="scroll-reveal grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12">
+        <!-- This grid is just for looks. It's responsive and changes color on hover. -->
+        <div class="h-24 bg-neon-pink border-2 border-brand-dark hover:scale-110 hover:shadow-hard-lime hover:z-10 transition-all"></div>
+        <div class="h-24 bg-neon-lime border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all"></div>
+        <div class="h-24 bg-neon-blue border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all"></div>
+        <div class="h-24 bg-brand-dark border-2 border-brand-dark hover:scale-110 hover:shadow-hard-blue hover:z-10 transition-all"></div>
+        <div class="h-24 bg-white border-2 border-brand-dark hover:scale-110 hover:shadow-hard-lime hover:z-10 transition-all"></div>
+        <div class="h-24 bg-neon-pink border-2 border-brand-dark hover:scale-110 hover:shadow-hard-lime hover:z-10 transition-all"></div>
+        <div class="h-24 bg-neon-lime border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all"></div>
+        <div class="h-24 bg-neon-blue border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all"></div>
+        <div class="h-24 bg-brand-dark border-2 border-brand-dark hover:scale-110 hover:shadow-hard-blue hover:z-10 transition-all hidden sm:block"></div>
+        <div class="h-24 bg-white border-2 border-brand-dark hover:scale-110 hover:shadow-hard-lime hover:z-10 transition-all hidden sm:block"></div>
+        <div class="h-24 bg-neon-pink border-2 border-brand-dark hover:scale-110 hover:shadow-hard-lime hover:z-10 transition-all hidden sm:block"></div>
+        <div class="h-24 bg-neon-lime border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all hidden sm:block"></div>
+        <div class="h-24 bg-neon-blue border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all hidden md:block"></div>
+        <div class="h-24 bg-brand-dark border-2 border-brand-dark hover:scale-110 hover:shadow-hard-blue hover:z-10 transition-all hidden md:block"></div>
+        <div class="h-24 bg-white border-2 border-brand-dark hover:scale-110 hover:shadow-hard-lime hover:z-10 transition-all hidden md:block"></div>
+        <div class="h-24 bg-neon-pink border-2 border-brand-dark hover:scale-110 hover:shadow-hard-lime hover:z-10 transition-all hidden md:block"></div>
+        <div class="h-24 bg-neon-lime border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all hidden lg:block"></div>
+        <div class="h-24 bg-neon-blue border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all hidden lg:block"></div>
+        <div class="h-24 bg-brand-dark border-2 border-brand-dark hover:scale-110 hover:shadow-hard-blue hover:z-10 transition-all hidden lg:block"></div>
+        <div class="h-24 bg-white border-2 border-brand-dark hover:scale-110 hover:shadow-hard-lime hover:z-10 transition-all hidden lg:block"></div>
+        <div class="h-24 bg-neon-pink border-2 border-brand-dark hover:scale-110 hover:shadow-hard-lime hover:z-10 transition-all hidden lg:block"></div>
+        <div class="h-24 bg-neon-lime border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all hidden lg:block"></div>
+        <div class="h-24 bg-neon-blue border-2 border-brand-dark hover:scale-110 hover:shadow-hard-pink hover:z-10 transition-all hidden lg:block"></div>
+        <div class="h-24 bg-brand-dark border-2 border-brand-dark hover:scale-110 hover:shadow-hard-blue hover:z-10 transition-all hidden lg:block"></div>
+    </section>
+
+    <!-- 
+      ============================================================
+      FOOTER: Raw and simple
+      ============================================================
+    -->
+    <footer class="w-full bg-brand-dark text-brand-bg p-10 text-center font-mono">
+        <p>© 2025 DORKSENSE. All rights reserved (or not).</p>
+        <p>A Privacy-Preserving AI Workflow</p>
+    </footer>
+
+
+    <!-- 
+      ============================================================
+      JAVASCRIPT: For scroll animations and draggable element
+      ============================================================
+    -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. Smooth Scroll Animation Logic ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.1 }); // Trigger when 10% is visible
+
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                observer.observe(el);
+            });
+
+
+            // --- 2. Draggable Element Logic ---
+            const draggable = document.getElementById('draggable');
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+
+            // --- Touch Events ---
+            draggable.addEventListener('touchstart', dragStart, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+            document.addEventListener('touchmove', drag, { passive: false });
+
+            // --- Mouse Events ---
+            draggable.addEventListener('mousedown', dragStart);
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('mousemove', drag);
+
+            function dragStart(e) {
+                // Get the initial mouse/touch position, adjusted by any previous drag
+                if (e.type === 'touchstart') {
+                    initialX = e.touches[0].clientX - xOffset;
+                    initialY = e.touches[0].clientY - yOffset;
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
+                
+                // Only start dragging if the target is the draggable element itself
+                if (e.target === draggable || draggable.contains(e.target)) {
+                    isDragging = true;
+                    draggable.style.cursor = 'grabbing';
+                    draggable.style.userSelect = 'none'; // Prevent selecting text while dragging
+                }
+            }
+
+            function dragEnd(e) {
+                // Update the offsets for the *next* drag
+                initialX = currentX;
+                initialY = currentY;
+                
+                isDragging = false;
+                draggable.style.cursor = 'move';
+                draggable.style.userSelect = 'auto';
+            }
+
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault(); // Prevent default browser drag/scroll
+                    
+                    // Calculate the new position
+                    if (e.type === 'touchmove') {
+                        currentX = e.touches[0].clientX - initialX;
+                        currentY = e.touches[0].clientY - initialY;
+                    } else {
+                        currentX = e.clientX - initialX;
+                        currentY = e.clientY - initialY;
+                    }
+
+                    // Store these new positions as the latest offsets
+                    xOffset = currentX;
+                    yOffset = currentY;
+
+                    // Apply the transformation
+                    setTranslate(currentX, currentY, draggable);
+                }
+            }
+
+            function setTranslate(xPos, yPos, el) {
+                // We apply translate *and* keep the original rotate
+                el.style.transform = `translate(${xPos}px, ${yPos}px) rotate(-5deg)`;
+            }
+        });
+    </script>
+
+</body>
+</html>
