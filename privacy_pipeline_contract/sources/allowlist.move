@@ -1,16 +1,17 @@
 module privacy_pipeline::allowlist {
+    // === Imports ===
     use std::string::String;
-
     use sui::dynamic_field;
-    use sui::object;
-    use sui::transfer;
-    use sui::tx_context;
 
-    const E_CAP_MISMATCH: u64 = 0;
-    const E_APPROVAL_FAILED: u64 = 1;
-    const E_ALREADY_ADDED: u64 = 2;
+    // === Errors ===
+    const ECapMismatch: u64 = 0;
+    const EApprovalFailed: u64 = 1;
+    const EAlreadyAdded: u64 = 2;
+
+    // === Constants ===
     const PUBLISH_VALUE: u64 = 3;
 
+    // === Structs ===
     public struct Allowlist has key {
         id: object::UID,
         name: String,
@@ -22,27 +23,11 @@ module privacy_pipeline::allowlist {
         allowlist_id: object::ID,
     }
 
+    // === Public Functions ===
     public fun add(allowlist: &mut Allowlist, cap: &Cap, addr: address) {
-        assert!(cap.allowlist_id == object::id(allowlist), E_CAP_MISMATCH);
-        assert!(!vector::contains(&allowlist.list, &addr), E_ALREADY_ADDED);
+        assert!(cap.allowlist_id == object::id(allowlist), ECapMismatch);
+        assert!(!vector::contains(&allowlist.list, &addr), EAlreadyAdded);
         vector::push_back(&mut allowlist.list, addr);
-    }
-
-    fun approve_internal(addr: address, namespace_bytes: vector<u8>, allowlist: &Allowlist): bool {
-        let ns = namespace(allowlist);
-        if (vector::length(&ns) > vector::length(&namespace_bytes)) {
-            return false;
-        };
-
-        let mut i = 0;
-        while (i < vector::length(&ns)) {
-            if (*vector::borrow(&ns, i) != *vector::borrow(&namespace_bytes, i)) {
-                return false;
-            };
-            i = i + 1;
-        };
-
-        vector::contains(&allowlist.list, &addr)
     }
 
     public fun create_allowlist(name: String, ctx: &mut tx_context::TxContext): Cap {
@@ -61,21 +46,17 @@ module privacy_pipeline::allowlist {
         cap
     }
 
-    entry fun create_allowlist_entry(name: String, ctx: &mut tx_context::TxContext) {
-        transfer::transfer<Cap>(create_allowlist(name, ctx), tx_context::sender(ctx));
-    }
-
     public fun namespace(allowlist: &Allowlist): vector<u8> {
         object::uid_to_bytes(&allowlist.id)
     }
 
     public fun publish(allowlist: &mut Allowlist, cap: &Cap, key: String) {
-        assert!(cap.allowlist_id == object::id(allowlist), E_CAP_MISMATCH);
+        assert!(cap.allowlist_id == object::id(allowlist), ECapMismatch);
         dynamic_field::add<String, u64>(&mut allowlist.id, key, PUBLISH_VALUE);
     }
 
     public fun remove(allowlist: &mut Allowlist, cap: &Cap, addr: address) {
-        assert!(cap.allowlist_id == object::id(allowlist), E_CAP_MISMATCH);
+        assert!(cap.allowlist_id == object::id(allowlist), ECapMismatch);
 
         let len = vector::length(&allowlist.list);
         let mut write = 0;
@@ -95,7 +76,34 @@ module privacy_pipeline::allowlist {
         };
     }
 
+    public fun get_size(allowlist: &Allowlist): u64 {
+        vector::length(&allowlist.list)
+    }
+
+    // === Entry Functions ===
+    entry fun create_allowlist_entry(name: String, ctx: &mut tx_context::TxContext) {
+        transfer::transfer<Cap>(create_allowlist(name, ctx), tx_context::sender(ctx));
+    }
+
     entry fun seal_approve(namespace_bytes: vector<u8>, allowlist: &Allowlist, ctx: &tx_context::TxContext) {
-        assert!(approve_internal(tx_context::sender(ctx), namespace_bytes, allowlist), E_APPROVAL_FAILED);
+        assert!(approve_internal(tx_context::sender(ctx), namespace_bytes, allowlist), EApprovalFailed);
+    }
+
+    // === Private Functions ===
+    fun approve_internal(addr: address, namespace_bytes: vector<u8>, allowlist: &Allowlist): bool {
+        let ns = namespace(allowlist);
+        if (vector::length(&ns) > vector::length(&namespace_bytes)) {
+            return false
+        };
+
+        let mut i = 0;
+        while (i < vector::length(&ns)) {
+            if (*vector::borrow(&ns, i) != *vector::borrow(&namespace_bytes, i)) {
+                return false
+            };
+            i = i + 1;
+        };
+
+        vector::contains(&allowlist.list, &addr)
     }
 }

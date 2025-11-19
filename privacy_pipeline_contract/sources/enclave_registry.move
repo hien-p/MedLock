@@ -1,14 +1,16 @@
 module privacy_pipeline::enclave_registry {
+    // === Imports ===
     use sui::event;
     use sui::table::{Self, Table};
     use sui::nitro_attestation::{Self, NitroAttestationDocument};
 
-    /// Errors
-    const E_NOT_ADMIN: u64 = 1;
-    const E_BAD_PCRS: u64 = 2;
-    const E_NO_PUBKEY: u64 = 3;
-    const E_ALREADY_REGISTERED: u64 = 4;
+    // === Errors ===
+    const ENotAdmin: u64 = 1;
+    const EBadPcrs: u64 = 2;
+    const ENoPubkey: u64 = 3;
+    const EAlreadyRegistered: u64 = 4;
 
+    // === Structs ===
     /// PCR expectation (index + expected bytes)
     public struct ExpectedPCR has copy, drop, store {
         index: u8,
@@ -29,6 +31,7 @@ module privacy_pipeline::enclave_registry {
         controller: address,
     }
 
+    // === Events ===
     /// Emitted when a new enclave is registered
     public struct EnclaveRegistered has copy, drop {
         pcr8: vector<u8>,
@@ -36,6 +39,7 @@ module privacy_pipeline::enclave_registry {
         registrar: address,
     }
 
+    // === Init Function ===
     /// Create & share the registry singleton. The caller becomes admin.
     fun init(ctx: &mut tx_context::TxContext) {
         let registry = Registry {
@@ -53,12 +57,7 @@ module privacy_pipeline::enclave_registry {
         transfer::transfer(cap, tx_context::sender(ctx));
     }
 
-    /// Admin: add a PCR constraint (e.g., index=8 with expected measurement)
-    entry fun set_expected_pcr(registry: &mut Registry, cap: &RegistryAdminCap, index: u8, value: vector<u8>) {
-        assert_admin(registry, cap);
-        vector::push_back(&mut registry.expected, ExpectedPCR { index, value });
-    }
-
+    // === Public Functions ===
     /// Register an enclave using a pre-verified Nitro attestation document and store its pubkey under PCR8.
     ///
     /// Callers should first invoke `sui::nitro_attestation::load_nitro_attestation` within the same programmable
@@ -71,17 +70,17 @@ module privacy_pipeline::enclave_registry {
         assert_admin(registry, cap);
 
         // 1) Check our expected PCR constraints
-        assert!(check_expected(&doc, &registry.expected), E_BAD_PCRS);
+        assert!(check_expected(&doc, &registry.expected), EBadPcrs);
 
         // 2) Extract enclave pubkey from attestation (DER‑encoded ed25519 key expected by the app)
         let pk_opt_ref = nitro_attestation::public_key(&doc);          // &Option<vector<u8>>
-        assert!(option::is_some(pk_opt_ref), E_NO_PUBKEY);
+        assert!(option::is_some(pk_opt_ref), ENoPubkey);
         let pubkey = bytes_clone(option::borrow(pk_opt_ref));
 
         // 3) Use PCR8 value as the enclave identity key
-        let pcr8 = pcr_value(&doc, 8u8);                               // AWS supports PCR0..4,8 :contentReference[oaicite:13]{index=13}
+        let pcr8 = pcr_value(&doc, 8u8);                               // AWS supports PCR0..4,8
         let pcr_for_contains = bytes_clone(&pcr8);
-        assert!(!table::contains(&registry.enclaves, pcr_for_contains), E_ALREADY_REGISTERED);
+        assert!(!table::contains(&registry.enclaves, pcr_for_contains), EAlreadyRegistered);
 
         let pk_for_event = bytes_clone(&pubkey);
         let pcr_for_table = bytes_clone(&pcr8);
@@ -94,15 +93,21 @@ module privacy_pipeline::enclave_registry {
         table::borrow(&registry.enclaves, bytes_clone(pcr8))
     }
 
-    // ----------------- helpers -----------------
+    // === Entry Functions ===
+    /// Admin: add a PCR constraint (e.g., index=8 with expected measurement)
+    entry fun set_expected_pcr(registry: &mut Registry, cap: &RegistryAdminCap, index: u8, value: vector<u8>) {
+        assert_admin(registry, cap);
+        vector::push_back(&mut registry.expected, ExpectedPCR { index, value });
+    }
 
+    // === Private Functions ===
     fun assert_admin(registry: &Registry, cap: &RegistryAdminCap) {
-        assert!(cap.registry_id == object::uid_to_inner(&registry.id), E_NOT_ADMIN);
+        assert!(cap.registry_id == object::uid_to_inner(&registry.id), ENotAdmin);
     }
 
     /// Read PCR bytes for `index` or return empty vec
     fun pcr_value(doc: &NitroAttestationDocument, index: u8) : vector<u8> {
-        let p = nitro_attestation::pcrs(doc);                          // &vector<PCREntry> :contentReference[oaicite:14]{index=14}
+        let p = nitro_attestation::pcrs(doc);                          // &vector<PCREntry>
         let n = vector::length(p);
         let mut i = 0;
         while (i < n) {

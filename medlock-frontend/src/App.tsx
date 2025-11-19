@@ -1,5 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SuiWalletPanel } from "./components/SuiWalletPanel";
+import { UploadSection } from "./components/UploadSection";
+import { EnclaveSection } from "./components/EnclaveSection";
+import { ResultSection } from "./components/ResultSection";
 
 const useScrollReveal = () => {
   useEffect(() => {
@@ -133,6 +136,17 @@ function App() {
   useScrollReveal();
   useDraggableAlert(draggableRef);
 
+  const [demoStarted, setDemoStarted] = useState(false);
+  const [blobId, setBlobId] = useState<string | null>(null);
+  const [result, setResult] = useState<any | null>(null);
+
+  const startDemo = () => {
+    setDemoStarted(true);
+    setTimeout(() => {
+      document.getElementById("demo-section")?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
+
   return (
     <div className="bg-brand-bg text-brand-dark font-mono overflow-x-hidden">
       <main className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden">
@@ -172,10 +186,10 @@ function App() {
             className="font-display text-[22vw] lg:text-[250px] text-neon-pink col-start-1 row-start-1"
             style={{ WebkitTextStroke: "2px #111111" }}
           >
-            DORKSENSE
+            medlock
           </h1>
           <h1 className="font-display text-[22vw] lg:text-[250px] text-neon-blue col-start-1 row-start-1 translate-x-1 translate-y-1 md:translate-x-2 md:translate-y-2">
-            DORKSENSE
+            medlock
           </h1>
         </div>
 
@@ -183,13 +197,14 @@ function App() {
           A Privacy-Preserving AI Workflow
         </h2>
 
-        <a
-          href="#content"
-          className="absolute bottom-10 font-mono animate-bounce text-2xl z-10 p-2 shadow-hard-sm bg-white border-2 border-brand-dark rounded-full"
-          aria-label="Scroll down to content"
-        >
-          👇
-        </a>
+        <div className="mt-12 z-10 flex gap-4">
+          <button
+            onClick={startDemo}
+            className="bg-brand-dark text-white font-mono text-xl px-8 py-4 border-2 border-brand-dark shadow-hard hover:bg-neon-pink hover:text-brand-dark hover:shadow-hard-lime transition-all animate-bounce"
+          >
+            START LIVE DEMO 👇
+          </button>
+        </div>
       </main>
 
       <section className="w-full bg-brand-dark text-brand-bg py-6 border-y-4 border-brand-dark overflow-hidden whitespace-nowrap">
@@ -210,6 +225,29 @@ function App() {
           </div>
         ))}
       </section>
+
+      {demoStarted && (
+        <section id="demo-section" className="container mx-auto p-4 md:p-10 py-16 bg-brand-bg border-b-4 border-brand-dark">
+          <h2 className="font-display text-5xl md:text-7xl mb-10 text-center scroll-reveal">
+            LIVE PIPELINE
+          </h2>
+
+          <div className="space-y-12">
+            <UploadSection onUploadComplete={setBlobId} />
+
+            {blobId && (
+              <EnclaveSection
+                blobId={blobId}
+                onAnalysisComplete={setResult}
+              />
+            )}
+
+            {result && (
+              <ResultSection result={result} />
+            )}
+          </div>
+        </section>
+      )}
 
       <section id="content" className="container mx-auto p-4 md:p-10 py-16">
         <h2 className="font-display text-5xl md:text-7xl mb-10 text-center scroll-reveal">
@@ -365,7 +403,7 @@ function App() {
       <ColorGrid />
 
       <footer className="w-full bg-brand-dark text-brand-bg p-10 text-center font-mono">
-        <p>© 2025 DORKSENSE. All rights reserved (or not).</p>
+        <p>© 2025 medlock. All rights reserved (or not).</p>
         <p>A Privacy-Preserving AI Workflow</p>
       </footer>
     </div>
