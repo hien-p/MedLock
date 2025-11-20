@@ -4,9 +4,9 @@ module privacy_pipeline::allowlist {
     use sui::dynamic_field;
 
     // === Errors ===
-    const ECapMismatch: u64 = 0;
-    const EApprovalFailed: u64 = 1;
-    const EAlreadyAdded: u64 = 2;
+    const EInvalidCap: u64 = 0;
+    const EApprovalFailure: u64 = 1;
+    const EDuplicateEntry: u64 = 2;
 
     // === Constants ===
     const PUBLISH_VALUE: u64 = 3;
@@ -25,8 +25,8 @@ module privacy_pipeline::allowlist {
 
     // === Public Functions ===
     public fun add(allowlist: &mut Allowlist, cap: &Cap, addr: address) {
-        assert!(cap.allowlist_id == object::id(allowlist), ECapMismatch);
-        assert!(!vector::contains(&allowlist.list, &addr), EAlreadyAdded);
+        assert!(cap.allowlist_id == object::id(allowlist), EInvalidCap);
+        assert!(!vector::contains(&allowlist.list, &addr), EDuplicateEntry);
         vector::push_back(&mut allowlist.list, addr);
     }
 
@@ -51,12 +51,12 @@ module privacy_pipeline::allowlist {
     }
 
     public fun publish(allowlist: &mut Allowlist, cap: &Cap, key: String) {
-        assert!(cap.allowlist_id == object::id(allowlist), ECapMismatch);
+        assert!(cap.allowlist_id == object::id(allowlist), EInvalidCap);
         dynamic_field::add<String, u64>(&mut allowlist.id, key, PUBLISH_VALUE);
     }
 
     public fun remove(allowlist: &mut Allowlist, cap: &Cap, addr: address) {
-        assert!(cap.allowlist_id == object::id(allowlist), ECapMismatch);
+        assert!(cap.allowlist_id == object::id(allowlist), EInvalidCap);
 
         let len = vector::length(&allowlist.list);
         let mut write = 0;
@@ -86,7 +86,7 @@ module privacy_pipeline::allowlist {
     }
 
     entry fun seal_approve(namespace_bytes: vector<u8>, allowlist: &Allowlist, ctx: &tx_context::TxContext) {
-        assert!(approve_internal(tx_context::sender(ctx), namespace_bytes, allowlist), EApprovalFailed);
+        assert!(approve_internal(tx_context::sender(ctx), namespace_bytes, allowlist), EApprovalFailure);
     }
 
     // === Private Functions ===

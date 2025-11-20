@@ -5,10 +5,11 @@ module privacy_pipeline::enclave_registry {
     use sui::nitro_attestation::{Self, NitroAttestationDocument};
 
     // === Errors ===
+    // === Errors ===
     const ENotAdmin: u64 = 1;
-    const EBadPcrs: u64 = 2;
-    const ENoPubkey: u64 = 3;
-    const EAlreadyRegistered: u64 = 4;
+    const EInvalidPCRs: u64 = 2;
+    const EMissingPublicKey: u64 = 3;
+    const EDuplicateEntry: u64 = 4;
 
     // === Structs ===
     /// PCR expectation (index + expected bytes)
@@ -70,17 +71,17 @@ module privacy_pipeline::enclave_registry {
         assert_admin(registry, cap);
 
         // 1) Check our expected PCR constraints
-        assert!(check_expected(&doc, &registry.expected), EBadPcrs);
+        assert!(check_expected(&doc, &registry.expected), EInvalidPCRs);
 
         // 2) Extract enclave pubkey from attestation (DER‑encoded ed25519 key expected by the app)
         let pk_opt_ref = nitro_attestation::public_key(&doc);          // &Option<vector<u8>>
-        assert!(option::is_some(pk_opt_ref), ENoPubkey);
+        assert!(option::is_some(pk_opt_ref), EMissingPublicKey);
         let pubkey = bytes_clone(option::borrow(pk_opt_ref));
 
         // 3) Use PCR8 value as the enclave identity key
         let pcr8 = pcr_value(&doc, 8u8);                               // AWS supports PCR0..4,8
         let pcr_for_contains = bytes_clone(&pcr8);
-        assert!(!table::contains(&registry.enclaves, pcr_for_contains), EAlreadyRegistered);
+        assert!(!table::contains(&registry.enclaves, pcr_for_contains), EDuplicateEntry);
 
         let pk_for_event = bytes_clone(&pubkey);
         let pcr_for_table = bytes_clone(&pcr8);
@@ -154,5 +155,15 @@ module privacy_pipeline::enclave_registry {
             i = i + 1;
         };
         out
+    }
+
+    #[test_only]
+    public fun force_register_for_testing(registry: &mut Registry, pcr8: vector<u8>, pubkey: vector<u8>) {
+        table::add(&mut registry.enclaves, pcr8, pubkey);
+    }
+
+    #[test_only]
+    public fun init_for_testing(ctx: &mut tx_context::TxContext) {
+        init(ctx);
     }
 }

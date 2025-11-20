@@ -3,8 +3,9 @@ module privacy_pipeline::subscription {
     use std::string::String;
 
     // === Errors ===
-    const EFeeMismatch: u64 = 1;
-    const EPublishUnauthorized: u64 = 0;
+    // === Errors ===
+    const EInvalidFee: u64 = 1;
+    const EUnauthorizedPublish: u64 = 0;
     const EApprovalFailure: u64 = 2;
 
     // === Constants ===
@@ -53,7 +54,7 @@ module privacy_pipeline::subscription {
     }
 
     public fun publish(service: &mut Service, cap: &Cap, key: String) {
-        assert!(cap.service_id == sui::object::id(service), EPublishUnauthorized);
+        assert!(cap.service_id == sui::object::id(service), EUnauthorizedPublish);
         sui::dynamic_field::add<String, u64>(&mut service.id, key, PUBLISH_VALUE);
     }
 
@@ -63,7 +64,7 @@ module privacy_pipeline::subscription {
         clk: &sui::clock::Clock,
         ctx: &mut sui::tx_context::TxContext,
     ): Subscription {
-        assert!(sui::coin::value(&payment) == service.fee, EFeeMismatch);
+        assert!(sui::coin::value(&payment) == service.fee, EInvalidFee);
         sui::transfer::public_transfer<sui::coin::Coin<sui::sui::SUI>>(payment, service.owner);
         Subscription {
             id: sui::object::new(ctx),
@@ -74,6 +75,14 @@ module privacy_pipeline::subscription {
 
     public fun transfer(subscription: Subscription, recipient: address) {
         sui::transfer::transfer<Subscription>(subscription, recipient);
+    }
+
+    public fun transfer_cap(cap: Cap, recipient: address) {
+        sui::transfer::transfer(cap, recipient);
+    }
+
+    public fun service_id_bytes(service: &Service): vector<u8> {
+        sui::object::uid_to_bytes(&service.id)
     }
 
     // === Entry Functions ===
@@ -92,11 +101,11 @@ module privacy_pipeline::subscription {
         service: &Service,
         clk: &sui::clock::Clock,
     ) {
-        assert!(approve_internal(namespace_bytes, subscription, service, clk), EApprovalFailure);
+        assert!(is_valid_subscription(namespace_bytes, subscription, service, clk), EApprovalFailure);
     }
 
     // === Private Functions ===
-    fun approve_internal(
+    public fun is_valid_subscription(
         namespace_bytes: vector<u8>,
         subscription: &Subscription,
         service: &Service,

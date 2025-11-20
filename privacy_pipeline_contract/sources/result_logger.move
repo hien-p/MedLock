@@ -6,7 +6,7 @@ module privacy_pipeline::result_logger {
     use privacy_pipeline::enclave_registry::{Self, Registry};
 
     // === Errors ===
-    const EBadSig: u64 = 1;
+    const EInvalidSignature: u64 = 1;
 
     // === Structs ===
     /// Canonical payload the enclave signs (BCS-encoded)
@@ -50,7 +50,7 @@ module privacy_pipeline::result_logger {
 
         // Verify signature (true => valid)
         let ok = ed25519::ed25519_verify(&signature, pk_ref, &msg);
-        assert!(ok, EBadSig);
+        assert!(ok, EInvalidSignature);
 
         // Emit a verifiable log
         event::emit(ResultLogged {
